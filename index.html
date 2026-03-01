@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estructura del Estado Colombiano</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
             --bg-color: #f5f5f7;
@@ -29,9 +30,34 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        .author-badge {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            text-align: right;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.07);
+            border-radius: 10px;
+            padding: 8px 10px;
+            backdrop-filter: blur(4px);
+        }
+
+        .author-badge p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.35;
+            color: #86868b;
+        }
+
+        .author-badge a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
         header {
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 30px;
             max-width: 800px;
         }
 
@@ -42,16 +68,14 @@
             margin-bottom: 8px;
         }
 
-        header h4 {
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
-        }
         header p {
             color: var(--text-secondary);
             font-size: 19px;
             font-weight: 400;
+        }
+
+        .header-image {
+            display: none;
         }
 
         .tree-container {
@@ -62,12 +86,51 @@
             max-width: 1400px;
         }
 
-        .tree-level {
-            display: flex;
-            justify-content: center;
-            position: relative;
-            padding-top: 40px;
+        .node-icon {
+            font-size: 24px;
+            color: var(--accent-blue);
+            margin-bottom: 12px;
+        }
+
+        .card-img, .mini-card-img {
             width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .img-apa {
+            display: block;
+            font-size: 2px;
+            line-height: 1.25;
+            color: #8b8b91;
+            margin: -4px 0 8px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.03);
+            width: 220px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .tree-level {
+            position: relative;
+            width: 100%;
+            margin-top: 42px;
+            padding-top: 56px;
         }
 
         .tree-level::before {
@@ -75,17 +138,30 @@
             position: absolute;
             top: 0;
             left: 50%;
+            transform: translateX(-50%);
             width: 2px;
-            height: 40px;
+            height: 36px;
             background-color: var(--line-color);
         }
 
         .nodes-row {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 14px;
             position: relative;
             width: 100%;
+            padding-top: 30px;
+            align-items: flex-start;
+        }
+
+        .nodes-row::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background-color: var(--line-color);
         }
 
         .node-wrapper {
@@ -93,8 +169,19 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            flex: 1;
+            flex: 0 1 260px;
             min-width: 220px;
+        }
+
+        .nodes-row > .node-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 30px;
+            background-color: var(--line-color);
         }
 
         .card {
@@ -106,14 +193,7 @@
             width: 200px;
             text-align: center;
             position: relative;
-            transition: var(--transition);
             z-index: 1;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-            border-color: var(--accent-blue);
         }
 
         .card h3 {
@@ -123,151 +203,150 @@
             line-height: 1.3;
         }
 
-        .card span {
+        .card > span {
             display: block;
             font-size: 12px;
             color: var(--text-secondary);
             margin-top: 4px;
         }
 
-        /* Mini-card específicamente para los elementos pequeños */
+        /* Mini-card */
         .mini-card {
-            padding: 12px;
+            padding: 14px 12px;
             font-size: 13px;
             width: 160px;
             background: #fbfbfd;
-            position: relative;
-            min-height: 40px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            text-align: center;
+            gap: 4px;
         }
 
-        /* El texto de la mini-card */
-        .mini-card .card-text {
-            position: relative;
-            z-index: 1;
-            font-weight: 500;
-        }
-
-        /* Contenedor del tooltip - posición absoluta */
-        .tooltip-wrapper {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        .info-trigger {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            width: 24px;
-            height: 24px;
-            background: var(--accent-blue);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(208, 98, 35, 0.5);
-            border: 2px solid white;
-            transition: var(--transition);
-            pointer-events: auto;
-            z-index: 20;
-        }
-
-        .info-trigger:hover {
-            transform: scale(1.1);
-            background: #9d491a;
-        }
-
-        .tooltip {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%) translateY(0);
-            width: 260px;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            border: 1px solid rgba(0,0,0,0.1);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-            text-align: left;
+        .mini-card .card-title {
+            font-weight: 600;
             font-size: 13px;
-            color: #333;
-            margin-bottom: 10px;
-            pointer-events: none;
+            color: var(--text-main);
         }
 
-        .tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -8px;
-            border-width: 8px;
-            border-style: solid;
-            border-color: white transparent transparent transparent;
+        .mini-card .card-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.4;
         }
 
-        .info-trigger:hover + .tooltip,
-        .tooltip:hover {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) translateY(-10px);
+        .mini-card .card-mini-note {
+            font-size: 10px;
+            color: #5b5b60;
+            line-height: 1.35;
+            margin-top: 2px;
         }
 
-        .tooltip b { 
-            color: var(--accent-blue); 
-            display: block; 
-            margin-bottom: 5px; 
-        }
-        
-        .tooltip i { 
-            color: var(--text-secondary); 
-            display: block; 
-            margin-top: 8px; 
-            font-size: 11px; 
+        .mini-card .card-ref {
+            font-size: 10px;
+            color: var(--accent-blue);
+            margin-top: 2px;
         }
 
         .root-card {
-            width: 300px;
+            width: min(980px, 94vw);
             background: var(--text-main);
             color: white;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            text-align: left;
         }
-        
-        .root-card span { 
-            color: #a1a1a6; 
+
+        .root-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 310px;
         }
-        
-        .root-card .info-trigger { 
-            background: white; 
-            color: var(--text-main); 
-            top: -10px;
-            right: -10px;
+
+        .root-head .node-icon {
+            margin: 0;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .root-head h3 {
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.2;
+        }
+
+        .root-head span {
+            display: block;
+            margin-top: 3px;
+            color: #a1a1a6;
+            font-size: 12px;
+        }
+
+        .root-card .root-desc {
+            font-size: 12px;
+            color: #c0c0c5;
+            margin: 0;
+            line-height: 1.35;
+            flex: 1;
+        }
+
+        .root-card .root-ref {
+            font-size: 11px;
+            color: var(--accent-blue);
+            margin: 0;
+            white-space: nowrap;
         }
 
         .sub-tree {
-            margin-top: 40px;
+            margin-top: 34px;
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
             justify-content: center;
+            position: relative;
+            padding-top: 28px;
         }
 
-        /* línea decorativa extra */
+        .sub-tree::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 12%;
+            right: 12%;
+            height: 2px;
+            background-color: var(--line-color);
+        }
+
+        .node-wrapper > .sub-tree::after {
+            content: '';
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 22px;
+            background-color: var(--line-color);
+        }
+
+        .sub-tree .mini-card {
+            position: relative;
+        }
+
+        .sub-tree .mini-card::before {
+            content: '';
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 28px;
+            background-color: var(--line-color);
+        }
+
         hr {
             border: none;
             border-top: 1px solid var(--line-color);
@@ -284,24 +363,32 @@
             margin: 30px 0 20px;
             max-width: 1200px;
         }
-
-        .footer-note {
-            margin-top: 40px;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            text-align: center;
+        
+        .footer-note p {
+            margin: 0 0 6px 0;
+            font-size: 0.75rem;
+            text-indent: -1.5em;
+            padding-left: 1.5em;
         }
 
         @media (max-width: 1024px) {
+            .tree-level {
+                padding-top: 38px;
+                margin-top: 34px;
+            }
+
             .nodes-row { 
                 flex-direction: column; 
                 align-items: center; 
                 gap: 40px; 
+                padding-top: 0;
             }
+
             .nodes-row::before { 
                 display: none; 
             }
-            .node-wrapper::before {
+
+            .nodes-row > .node-wrapper::before {
                 content: '';
                 position: absolute;
                 top: -40px;
@@ -310,82 +397,194 @@
                 height: 40px;
                 background-color: var(--line-color);
             }
+
+            .sub-tree::before {
+                left: 6%;
+                right: 6%;
+            }
+
+            .root-card {
+                width: min(700px, 96vw);
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                text-align: left;
+            }
+
+            .root-head {
+                min-width: 0;
+            }
+
+            .root-card .root-ref {
+                white-space: normal;
+            }
+        }
+
+        @page {
+            size: A3 landscape;
+            margin: 10mm;
+        }
+
+        @media print {
+            body {
+                padding: 8px 8px;
+                background: #ffffff;
+            }
+
+            header {
+                margin-bottom: 12px;
+            }
+
+            header h1 {
+                font-size: 34px;
+                margin-bottom: 6px;
+            }
+
+            header p {
+                font-size: 15px;
+            }
+
+            .author-badge {
+                position: fixed;
+                top: 8mm;
+                right: 10mm;
+                background: rgba(255, 255, 255, 0.95);
+                box-shadow: none;
+                border-color: rgba(0, 0, 0, 0.12);
+            }
+
+            .card {
+                box-shadow: none;
+                border: 1px solid rgba(0, 0, 0, 0.12);
+                break-inside: avoid;
+                page-break-inside: avoid;
+                width: auto;
+            }
+
+            .card:hover {
+                transform: none;
+                box-shadow: none;
+            }
+
+            .tree-container,
+            .tree-level,
+            .nodes-row,
+            .node-wrapper,
+            .sub-tree {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .tree-container {
+                max-width: none;
+                width: 100%;
+            }
+
+            .tree-level {
+                margin-top: 24px;
+                padding-top: 38px;
+            }
+
+            .nodes-row {
+                gap: 10px;
+                justify-content: space-between;
+                padding-top: 24px;
+            }
+
+            .nodes-row > .node-wrapper {
+                flex: 0 0 19%;
+                min-width: 0;
+            }
+
+            .sub-tree {
+                margin-top: 20px;
+                gap: 8px;
+                padding-top: 22px;
+            }
+
+            .img-apa {
+                font-size: 7px;
+                color: #8d8d94;
+            }
+
+            .footer-note {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Estado Colombiano</h1>
-        <p>Estructura del poder público · Constitución 1991 · 2026</p>
-        <p style="font-size: 15px;">Alejandra Bolaños Ladron de Guevara - Código: 200260</p>
-    </header>
+    <div class="author-badge">
+    <p>Alejandra Bolaños Ladron de Guevara · Código: 200260</p>
+    <p>
+        <a href="https://alejandra-bolanos-ldg.github.io/estado_colombiano/" target="_blank">alejandra-bolanos-ldg.github.io</a>
+    </p>
+</div>
+
+<header style="position: relative;">
+    <h1><i class="fas fa-landmark" style="margin-right: 15px;"></i>Estado Colombiano</h1>
+    <p>Estructura del poder público · Constitución 1991 · 2026</p>
+</header>
 
     <div class="tree-container">
         
-        <!-- NIVEL 1: RAÍZ (con tooltip sobre todos) -->
+        <!-- NIVEL 1: RAÍZ -->
         <div class="node-wrapper">
             <div class="card root-card">
-                <div style="position: relative;">
-                    <div class="info-trigger">i</div>
-                    <div class="tooltip">
-                        <b>Estado Social de Derecho</b>
-                        República unitaria, descentralizada, con autonomía de sus entidades territoriales. El poder público se distribuye para garantizar equilibrio y control.
-                        <i>Artículo 1° Constitución Política</i>
+                <div class="root-head">
+                    <i class="fas fa-flag node-icon" style="color: #FFCD00;"></i>
+                    <div>
+                        <h3>ESTADO COLOMBIANO</h3>
+                        <span>Organización política</span>
                     </div>
                 </div>
-                <h3>ESTADO COLOMBIANO</h3>
-                <span>Organización política</span>
+                <p class="root-desc">República unitaria, descentralizada, con autonomía de sus entidades territoriales. El poder público se distribuye para garantizar equilibrio y control.</p>
+                <p class="root-ref">Art. 1° Constitución Política</p>
             </div>
         </div>
 
-        <!-- NIVEL 2: GRANDES DIVISIONES (con TODA la info detallada) -->
+        <!-- NIVEL 2 -->
         <div class="tree-level">
             <div class="nodes-row">
                 
                 <!-- 1 · RAMAS DEL PODER PÚBLICO -->
                 <div class="node-wrapper">
                     <div class="card">
+                        <img src="https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&q=80&w=500" alt="Capitolio Nacional" class="card-img">
+                        <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                        <i class="fas fa-balance-scale node-icon"></i>
                         <h3>RAMAS DEL PODER PÚBLICO</h3>
                         <span>Legislativa · Ejecutiva · Judicial</span>
                     </div>
                     
                     <div class="sub-tree">
-                        <!-- Ejecutiva -->
                         <div class="card mini-card">
-                            <div class="tooltip-wrapper">
-                                <div class="info-trigger">i</div>
-                                <div class="tooltip">
-                                    <b>Rama Ejecutiva</b>
-                                    Presidente, Vicepresidente, 16 ministerios y departamentos administrativos (DNP, DANE). Dirige la administración, ejecuta leyes.
-                                    <i>Art. 115-146 CP</i>
-                                </div>
-                            </div>
-                            <span class="card-text">EJECUTIVA</span>
+                            <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=300" alt="Gabinete" class="mini-card-img">
+                            <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                            <i class="fas fa-user-tie" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                            <span class="card-title">EJECUTIVA</span>
+                            <span class="card-desc">Presidente, Vicepresidente, 16 ministerios.</span>
+                            <span class="card-mini-note">Dirige el gobierno nacional y ejecuta las leyes.</span>
+                            <span class="card-ref">Art. 115–146 CP</span>
                         </div>
-                        <!-- Legislativa -->
                         <div class="card mini-card">
-                            <div class="tooltip-wrapper">
-                                <div class="info-trigger">i</div>
-                                <div class="tooltip">
-                                    <b>Rama Legislativa · Congreso</b>
-                                    Bicameral: Senado (108) y Cámara de Representantes. Función constituyente, legislativa y control político.
-                                    <i>Art. 132-170 CP</i>
-                                </div>
-                            </div>
-                            <span class="card-text">LEGISLATIVA</span>
+                            <img src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&q=80&w=300" alt="Congreso de la República" class="mini-card-img">
+                            <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                            <i class="fas fa-users-viewfinder" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                            <span class="card-title">LEGISLATIVA</span>
+                            <span class="card-desc">Senado y Cámara de Representantes.</span>
+                            <span class="card-mini-note">Debate, aprueba y reforma leyes en el Congreso.</span>
+                            <span class="card-ref">Art. 132–170 CP</span>
                         </div>
-                        <!-- Judicial -->
                         <div class="card mini-card">
-                            <div class="tooltip-wrapper">
-                                <div class="info-trigger">i</div>
-                                <div class="tooltip">
-                                    <b>Rama Judicial</b>
-                                    Cortes: Constitucional, Suprema, Consejo de Estado. Comisión de Disciplina, Consejo Superior, Fiscalía, jurisdicciones especiales.
-                                    <i>Art. 228-257 CP</i>
-                                </div>
-                            </div>
-                            <span class="card-text">JUDICIAL</span>
+                            <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&q=80&w=300" alt="Palacio de Justicia" class="mini-card-img">
+                            <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                            <i class="fas fa-gavel" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                            <span class="card-title">JUDICIAL</span>
+                            <span class="card-desc">Cortes y Fiscalía General de la Nación.</span>
+                            <span class="card-mini-note">Administra justicia y resuelve conflictos jurídicos.</span>
+                            <span class="card-ref">Art. 228–257 CP</span>
                         </div>
                     </div>
                 </div>
@@ -393,53 +592,48 @@
                 <!-- 2 · ÓRGANOS DE CONTROL -->
                 <div class="node-wrapper">
                     <div class="card">
+                        <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=500" alt="Control y Vigilancia" class="card-img">
+                        <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                        <i class="fas fa-shield-halved node-icon"></i>
                         <h3>ÓRGANOS DE CONTROL</h3>
                         <span>Ministerio Público · Fiscal</span>
                     </div>
                     <div class="sub-tree">
                         <div class="card mini-card">
-                            <div class="tooltip-wrapper">
-                                <div class="info-trigger">i</div>
-                                <div class="tooltip">
-                                    <b>Procuraduría General</b>
-                                    Vigila conducta de servidores públicos. Integra el Ministerio Público con la Defensoría.
-                                    <i>Art. 277 CP · función disciplinaria</i>
-                                </div>
-                            </div>
-                            <span class="card-text">Procuraduría</span>
+                            <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=300" alt="Vigilancia" class="mini-card-img">
+                            <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                            <i class="fas fa-user-shield" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                            <span class="card-title">Procuraduría</span>
+                            <span class="card-desc">Vigila conducta de servidores.</span>
+                            <span class="card-mini-note">Control disciplinario y defensa del interés público.</span>
+                            <span class="card-ref">Art. 277 CP</span>
                         </div>
                         <div class="card mini-card">
-                            <div class="tooltip-wrapper">
-                                <div class="info-trigger">i</div>
-                                <div class="tooltip">
-                                    <b>Contraloría General</b>
-                                    Control fiscal sobre recursos públicos. Auditoría General supervisa a la Contraloría.
-                                    <i>Art. 267 CP · Ley 42/93</i>
-                                </div>
-                            </div>
-                            <span class="card-text">Contraloría</span>
+                            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=300" alt="Control Fiscal" class="mini-card-img">
+                            <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                            <i class="fas fa-magnifying-glass-chart" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                            <span class="card-title">Contraloría</span>
+                            <span class="card-desc">Control fiscal sobre recursos.</span>
+                            <span class="card-mini-note">Supervisa uso del presupuesto y patrimonio público.</span>
+                            <span class="card-ref">Art. 267 CP</span>
                         </div>
                         <div class="card mini-card">
-                            <div class="tooltip-wrapper">
-                                <div class="info-trigger">i</div>
-                                <div class="tooltip">
-                                    <b>Defensoría del Pueblo</b>
-                                    Promueve y protege los derechos humanos. Pertenece al Ministerio Público.
-                                    <i>Art. 282 CP · Ley 24/92</i>
-                                </div>
-                            </div>
-                            <span class="card-text">Defensoría</span>
+                            <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&q=80&w=300" alt="Defensoría" class="mini-card-img">
+                            <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                            <i class="fas fa-hand-holding-heart" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                            <span class="card-title">Defensoría</span>
+                            <span class="card-desc">Protege los derechos humanos.</span>
+                            <span class="card-mini-note">Orienta y acompaña ciudadanos frente al Estado.</span>
+                            <span class="card-ref">Art. 282 CP</span>
                         </div>
                         <div class="card mini-card">
-                            <div class="tooltip-wrapper">
-                                <div class="info-trigger">i</div>
-                                <div class="tooltip">
-                                    <b>Auditoría General</b>
-                                    Vigila la gestión fiscal de la Contraloría General.
-                                    <i>Art. 274 CP</i>
-                                </div>
-                            </div>
-                            <span class="card-text">Auditoría</span>
+                            <img src="https://images.unsplash.com/photo-1554224154-26032ffc0d07?auto=format&fit=crop&q=80&w=300" alt="Auditoría de Documentos" class="mini-card-img">
+                            <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                            <i class="fas fa-file-invoice-dollar" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                            <span class="card-title">Auditoría</span>
+                            <span class="card-desc">Vigila gestión de la Contraloría.</span>
+                            <span class="card-mini-note">Evalúa desempeño y control interno fiscal.</span>
+                            <span class="card-ref">Art. 274 CP</span>
                         </div>
                     </div>
                 </div>
@@ -447,31 +641,30 @@
                 <!-- 3 · ORGANIZACIÓN ELECTORAL -->
                 <div class="node-wrapper">
                     <div class="card">
+                        <img src="https://images.unsplash.com/photo-1590247813693-5541d1c609fd?auto=format&fit=crop&q=80&w=500" alt="Urna de Votación Democrática" class="card-img">
+                        <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                        <i class="fas fa-id-card node-icon"></i>
                         <h3>ORGANIZACIÓN ELECTORAL</h3>
                         <span>Identidad · comicios</span>
                     </div>
                     <div class="sub-tree">
                         <div class="card mini-card">
-                            <div class="tooltip-wrapper">
-                                <div class="info-trigger">i</div>
-                                <div class="tooltip">
-                                    <b>Registraduría Nacional</b>
-                                    Organiza elecciones, registro civil, cédulas. Dirigida por el Registrador.
-                                    <i>Art. 266 CP · Decreto 1010/00</i>
-                                </div>
-                            </div>
-                            <span class="card-text">Registraduría</span>
+                            <img src="https://www.ambitojuridico.com/sites/default/files/2024-03/Registraduria-Nacional%28Registraduria%29.jpg" alt="Registro e Identidad" class="mini-card-img">
+                            <span class="img-apa">Fuente APA: Ambito Juridico. (2024). Registraduria Nacional [Fotografia].</span>
+                            <i class="fas fa-id-badge" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                            <span class="card-title">Registraduría</span>
+                            <span class="card-desc">Organiza elecciones y cédulas.</span>
+                            <span class="card-mini-note">Administra registro civil e identidad ciudadana.</span>
+                            <span class="card-ref">Art. 266 CP</span>
                         </div>
                         <div class="card mini-card">
-                            <div class="tooltip-wrapper">
-                                <div class="info-trigger">i</div>
-                                <div class="tooltip">
-                                    <b>Consejo Nacional Electoral</b>
-                                    Vigila escrutinios, financiación de campañas y partidos.
-                                    <i>Art. 264 CP · magistrados elegidos por Congreso</i>
-                                </div>
-                            </div>
-                            <span class="card-text">CNE</span>
+                            <img src="https://images.unsplash.com/photo-1575320181282-9afab399332c?auto=format&fit=crop&q=80&w=300" alt="CNE" class="mini-card-img">
+                            <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                            <i class="fas fa-check-to-slot" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                            <span class="card-title">CNE</span>
+                            <span class="card-desc">Vigila escrutinios y partidos.</span>
+                            <span class="card-mini-note">Regula procesos electorales y financiación política.</span>
+                            <span class="card-ref">Art. 264 CP</span>
                         </div>
                     </div>
                 </div>
@@ -479,144 +672,138 @@
                 <!-- 4 · ÓRGANOS AUTÓNOMOS -->
                 <div class="node-wrapper">
                     <div class="card">
+                        <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=500" alt="Estructura Autónoma" class="card-img">
+                        <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                        <i class="fas fa-gears node-icon"></i>
                         <h3>ÓRGANOS AUTÓNOMOS</h3>
                         <span>Independientes · técnicos</span>
                     </div>
                     <div class="sub-tree">
                         <div class="card mini-card">
-                            <div class="tooltip-wrapper">
-                                <div class="info-trigger">i</div>
-                                <div class="tooltip">
-                                    <b>Banco de la República</b>
-                                    Autoridad monetaria, crediticia y cambiaria. Emite moneda, controla inflación.
-                                    <i>Art. 371 CP</i>
-                                </div>
-                            </div>
-                            <span class="card-text">Banco Rep.</span>
+                            <img src="https://imagenes.elpais.com/resizer/v2/RAYYYC2NNZH5XHVLOAQYB5W3PI.jpg?auth=a6fa01dc885bfbe9c5ff763150f0c9ca99120b7e8859277d19dd03347871de5e&width=1960&height=1470&focal=2052%2C2300" alt="Banco Central Monedas" class="mini-card-img">
+                            <span class="img-apa">Fuente APA: El Pais. (s. f.). Banco central [Fotografia].</span>
+                            <i class="fas fa-coins" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                            <span class="card-title">Banco Rep.</span>
+                            <span class="card-desc">Autoridad monetaria.</span>
+                            <span class="card-mini-note">Define política monetaria y estabilidad de precios.</span>
+                            <span class="card-ref">Art. 371 CP</span>
                         </div>
                         <div class="card mini-card">
-                            <div class="tooltip-wrapper">
-                                <div class="info-trigger">i</div>
-                                <div class="tooltip">
-                                    <b>CNSC</b>
-                                    Comisión Nacional del Servicio Civil. Administra carrera administrativa.
-                                    <i>Art. 130 CP · Ley 909/04</i>
-                                </div>
-                            </div>
-                            <span class="card-text">CNSC</span>
+                            <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=300" alt="Gestión de Talento Humano" class="mini-card-img">
+                            <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                            <i class="fas fa-user-gear" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                            <span class="card-title">CNSC</span>
+                            <span class="card-desc">Carrera administrativa.</span>
+                            <span class="card-mini-note">Garantiza mérito en ingreso y ascenso estatal.</span>
+                            <span class="card-ref">Art. 130 CP</span>
                         </div>
                         <div class="card mini-card">
-                            <div class="tooltip-wrapper">
-                                <div class="info-trigger">i</div>
-                                <div class="tooltip">
-                                    <b>CAR / Universidades</b>
-                                    Corporaciones Autónomas Regionales (autoridad ambiental). Universidades públicas autónomas.
-                                    <i>Ley 99/93 · Art. 69 CP</i>
-                                </div>
-                            </div>
-                            <span class="card-text">CAR / U.</span>
+                            <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=300" alt="Naturaleza y Ambiente" class="mini-card-img">
+                            <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                            <i class="fas fa-leaf" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                            <span class="card-title">CAR / U.</span>
+                            <span class="card-desc">Autoridad ambiental y Universidades.</span>
+                            <span class="card-mini-note">Gestionan ambiente regional y autonomía académica.</span>
+                            <span class="card-ref">Ley 99/93</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- 5 · SISTEMA DE PAZ (SIVJRNR) -->
+                <!-- 5 · SISTEMA INTEGRAL DE PAZ -->
                 <div class="node-wrapper">
                     <div class="card">
+                        <img src="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&q=80&w=500" alt="Paz y Esperanza" class="card-img">
+                        <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                        <i class="fas fa-dove node-icon"></i>
                         <h3>SISTEMA INTEGRAL DE PAZ</h3>
                         <span>Verdad · Justicia · Reparación</span>
                     </div>
                     <div class="sub-tree">
                         <div class="card mini-card">
-                            <div class="tooltip-wrapper">
-                                <div class="info-trigger">i</div>
-                                <div class="tooltip">
-                                    <b>JEP</b>
-                                    Jurisdicción Especial para la Paz. Justicia transicional para crímenes del conflicto.
-                                    <i>Acto Legislativo 01/2017</i>
-                                </div>
-                            </div>
-                            <span class="card-text">JEP</span>
+                            <img src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&q=80&w=300" alt="Justicia y Paz" class="mini-card-img">
+                            <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                            <i class="fas fa-dove" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                            <span class="card-title">JEP</span>
+                            <span class="card-desc">Justicia transicional.</span>
+                            <span class="card-mini-note">Juzga crímenes del conflicto con enfoque restaurativo.</span>
+                            <span class="card-ref">Acto Leg. 01/17</span>
                         </div>
                         <div class="card mini-card">
-                            <div class="tooltip-wrapper">
-                                <div class="info-trigger">i</div>
-                                <div class="tooltip">
-                                    <b>UBPD</b>
-                                    Unidad de Búsqueda de Personas dadas por Desaparecidas.
-                                    <i>Decreto-ley 899/2017</i>
-                                </div>
-                            </div>
-                            <span class="card-text">UBPD</span>
+                            <img src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&q=80&w=300" alt="Derechos Humanos y Búsqueda" class="mini-card-img">
+                            <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                            <i class="fas fa-person-circle-question" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                            <span class="card-title">UBPD</span>
+                            <span class="card-desc">Búsqueda de desaparecidos.</span>
+                            <span class="card-mini-note">Busca personas desaparecidas de forma humanitaria.</span>
+                            <span class="card-ref">Decr. 899/17</span>
                         </div>
                         <div class="card mini-card">
-                            <div class="tooltip-wrapper">
-                                <div class="info-trigger">i</div>
-                                <div class="tooltip">
-                                    <b>Legado Comisión Verdad</b>
-                                    Comité de seguimiento del Informe Final (2022). Memoria y no repetición.
-                                    <i>Acuerdo de Paz 2016</i>
-                                </div>
-                            </div>
-                            <span class="card-text">CEV · legado</span>
+                            <img src="https://images.unsplash.com/photo-1452421822248-d4c2b47f0c81?auto=format&fit=crop&q=80&w=300" alt="Archivo y Memoria Histórica" class="mini-card-img">
+                            <span class="img-apa">Fuente APA: Unsplash. (s. f.). Fotografia [Imagen].</span>
+                            <i class="fas fa-book-open" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                            <span class="card-title">CEV · legado</span>
+                            <span class="card-desc">Memoria y no repetición.</span>
+                            <span class="card-mini-note">Aporta verdad histórica y recomendaciones de paz.</span>
+                            <span class="card-ref">Acuerdo 2016</span>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
-        <!-- Línea divisoria (manteniendo estilo) -->
         <hr>
 
-        <!-- Entidades complementarias (detalle adicional del documento) -->
-     <div style="background: transparent; font-size: 0.85rem; color: #6e6e73; text-align: center; width: 100%;">— Componentes Especializados —</div>
+        <div style="background: transparent; font-size: 0.85rem; color: #6e6e73; text-align: center; width: 100%;">— Componentes Especializados —</div>
         <div class="extra-detail-row">
             <div class="card mini-card" style="width: 160px;">
-                <div class="tooltip-wrapper">
-                    <div class="info-trigger">i</div>
-                    <div class="tooltip">
-                        <b>Ministerio Público</b>
-                        Integrado por Procuraduría y Defensoría del Pueblo.
-                    </div>
-                </div>
-                <span class="card-text">Ministerio Público</span>
+                <i class="fas fa-building-shield" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                <span class="card-title">Ministerio Público</span>
+                <span class="card-desc">Integrado por Procuraduría y Defensoría del Pueblo.</span>
+                <span class="card-mini-note">Promueve legalidad, derechos y control de la función pública.</span>
             </div>
             <div class="card mini-card" style="width: 160px;">
-                <div class="tooltip-wrapper">
-                    <div class="info-trigger">i</div>
-                    <div class="tooltip">
-                        <b>Fiscalía General</b>
-                        Investiga y acusa. Rama Judicial pero con autonomía administrativa.
-                        <i>Art. 249 CP</i>
-                    </div>
-                </div>
-                <span class="card-text">Fiscalía</span>
+                <i class="fas fa-scale-balanced" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                <span class="card-title">Fiscalía</span>
+                <span class="card-desc">Investiga y acusa. Rama Judicial pero con autonomía administrativa.</span>
+                <span class="card-mini-note">Dirige investigación penal y presenta acusaciones ante jueces.</span>
+                <span class="card-ref">Art. 249 CP</span>
             </div>
             <div class="card mini-card" style="width: 160px;">
-                <div class="tooltip-wrapper">
-                    <div class="info-trigger">i</div>
-                    <div class="tooltip">
-                        <b>Consejo Superior de la Judicatura</b>
-                        Administra carrera judicial y recursos de la rama.
-                    </div>
-                </div>
-                <span class="card-text">Consejo Judicatura</span>
+                <i class="fas fa-sitemap" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                <span class="card-title">Consejo Judicatura</span>
+                <span class="card-desc">Administra carrera judicial y recursos de la rama.</span>
+                <span class="card-mini-note">Organiza gestión administrativa del sistema judicial.</span>
             </div>
             <div class="card mini-card" style="width: 160px;">
-                <div class="tooltip-wrapper">
-                    <div class="info-trigger">i</div>
-                    <div class="tooltip">
-                        <b>Comisión de Disciplina Judicial</b>
-                        Función disciplinaria sobre funcionarios de la Rama Judicial.
-                    </div>
-                </div>
-                <span class="card-text">Disciplina Judicial</span>
+                <i class="fas fa-user-check" style="color: var(--accent-blue); margin-bottom: 5px;"></i>
+                <span class="card-title">Disciplina Judicial</span>
+                <span class="card-desc">Función disciplinaria sobre funcionarios de la Rama Judicial.</span>
+                <span class="card-mini-note">Sanciona faltas éticas y disciplinarias de jueces.</span>
             </div>
         </div>
 
-        <!-- Nota final con fuente -->
-        <div class="footer-note">
-            Información actualizada a 2026 · Constitución Política de Colombia 1991 y desarrollos normativos
-        </div>
+<div class="footer-note" style="max-width: 900px; text-align: left; line-height: 1.6;">
+    <strong style="display: block; margin-bottom: 8px; text-align: center;">Bibliografía — Normas APA 7.ª ed.</strong>
+
+    <p>Asamblea Nacional Constituyente. (1991). <em>Constitución Política de Colombia</em> (arts. 1°, 115–146, 130, 132–170, 228–257, 249, 264, 266, 267, 274, 277, 282, 371). Gaceta Constitucional N.° 116. <a href="http://www.secretariasenado.gov.co/senado/basedoc/constitucion_politica_1991.html" target="_blank">http://www.secretariasenado.gov.co/senado/basedoc/constitucion_politica_1991.html</a></p>
+
+    <p>Congreso de la República de Colombia. (1992, 15 de diciembre). <em>Ley 24 de 1992.</em> Diario Oficial N.° 40.690. <a href="http://www.secretariasenado.gov.co/senado/basedoc/ley_0024_1992.html" target="_blank">http://www.secretariasenado.gov.co/senado/basedoc/ley_0024_1992.html</a></p>
+
+    <p>Congreso de la República de Colombia. (1993, 26 de enero). <em>Ley 42 de 1993.</em> Diario Oficial N.° 40.732. <a href="http://www.secretariasenado.gov.co/senado/basedoc/ley_0042_1993.html" target="_blank">http://www.secretariasenado.gov.co/senado/basedoc/ley_0042_1993.html</a></p>
+
+    <p>Congreso de la República de Colombia. (1993, 22 de diciembre). <em>Ley 99 de 1993.</em> Diario Oficial N.° 41.146. <a href="http://www.secretariasenado.gov.co/senado/basedoc/ley_0099_1993.html" target="_blank">http://www.secretariasenado.gov.co/senado/basedoc/ley_0099_1993.html</a></p>
+
+    <p>Congreso de la República de Colombia. (2004, 23 de septiembre). <em>Ley 909 de 2004.</em> Diario Oficial N.° 45.680. <a href="http://www.secretariasenado.gov.co/senado/basedoc/ley_0909_2004.html" target="_blank">http://www.secretariasenado.gov.co/senado/basedoc/ley_0909_2004.html</a></p>
+
+    <p>Presidencia de la República de Colombia. (2000, 6 de junio). <em>Decreto 1010 de 2000.</em> Diario Oficial N.° 44.034. <a href="http://www.secretariasenado.gov.co/senado/basedoc/decreto_1010_2000.html" target="_blank">http://www.secretariasenado.gov.co/senado/basedoc/decreto_1010_2000.html</a></p>
+
+    <p>Presidencia de la República de Colombia. (2017). <em>Decreto-Ley 899 de 2017.</em> Diario Oficial N.° 50.229. <a href="https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=80247" target="_blank">https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=80247</a></p>
+
+    <p>Congreso de la República de Colombia. (2017). <em>Acto Legislativo 01 de 2017.</em> Diario Oficial N.° 50.196. <a href="http://www.secretariasenado.gov.co/senado/basedoc/acto_legislativo_01_2017.html" target="_blank">http://www.secretariasenado.gov.co/senado/basedoc/acto_legislativo_01_2017.html</a></p>
+
+    <p>Gobierno de Colombia y FARC-EP. (2016, 24 de noviembre). <em>Acuerdo Final para la Terminación del Conflicto y la Construcción de una Paz Estable y Duradera.</em> Alto Comisionado para la Paz. <a href="https://peacemaker.un.org/sites/peacemaker.un.org/files/Colombia%20Nuevo%20Acuerdo%20Final%2024%20Noviembre%202016.pdf" target="_blank">https://peacemaker.un.org/sites/peacemaker.un.org/files/Colombia%20Nuevo%20Acuerdo%20Final%2024%20Noviembre%202016.pdf</a></p>
+</div>
 
     </div>
 
@@ -624,3 +811,8 @@
 
 </body>
 </html>
+
+
+
+
+
