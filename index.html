@@ -16,6 +16,11 @@
             --border-radius: 14px;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --connector-w: 2px;
+            --main-trunk-h: 8px;
+            --main-drop-h: 10px;
+            --sub-bridge-h: 12px;
+            --sub-drop-h: 14px;
         }
 
         body {
@@ -129,8 +134,8 @@
         .tree-level {
             position: relative;
             width: 100%;
-            margin-top: 42px;
-            padding-top: 56px;
+            margin-top: 0;
+            padding-top: var(--main-trunk-h);
         }
 
         .tree-level::before {
@@ -139,8 +144,8 @@
             top: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 2px;
-            height: 36px;
+            width: var(--connector-w);
+            height: var(--main-trunk-h);
             background-color: var(--line-color);
         }
 
@@ -150,7 +155,7 @@
             gap: 14px;
             position: relative;
             width: 100%;
-            padding-top: 30px;
+            padding-top: var(--main-drop-h);
             align-items: flex-start;
         }
 
@@ -158,9 +163,10 @@
             content: '';
             position: absolute;
             top: 0;
-            left: 10%;
-            right: 10%;
-            height: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(1300px, 88%);
+            height: var(--connector-w);
             background-color: var(--line-color);
         }
 
@@ -169,8 +175,14 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            flex: 0 1 260px;
+            flex: 0 1 240px;
             min-width: 220px;
+        }
+
+        .tree-container > .node-wrapper {
+            width: min(760px, 94vw);
+            flex: 0 0 auto;
+            min-width: 0;
         }
 
         .nodes-row > .node-wrapper::before {
@@ -179,8 +191,8 @@
             top: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 2px;
-            height: 30px;
+            width: var(--connector-w);
+            height: var(--main-drop-h);
             background-color: var(--line-color);
         }
 
@@ -190,7 +202,7 @@
             padding: 20px;
             box-shadow: var(--shadow);
             border: 1px solid rgba(0,0,0,0.03);
-            width: 200px;
+            width: 160px;
             text-align: center;
             position: relative;
             z-index: 1;
@@ -205,7 +217,7 @@
 
         .card > span {
             display: block;
-            font-size: 12px;
+            font-size: 9px;
             color: var(--text-secondary);
             margin-top: 4px;
         }
@@ -250,85 +262,66 @@
         }
 
         .root-card {
-            width: min(980px, 94vw);
+            width: 100%;
             background: var(--text-main);
             color: white;
-            padding: 14px 20px;
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            text-align: left;
+            padding: 14px 18px;
+            text-align: center;
         }
 
-        .root-head {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 310px;
-        }
-
-        .root-head .node-icon {
-            margin: 0;
-            font-size: 28px;
-            flex-shrink: 0;
-        }
-
-        .root-head h3 {
+        .root-card h3 {
             margin: 0;
             font-size: 18px;
             line-height: 1.2;
         }
 
-        .root-head span {
-            display: block;
-            margin-top: 3px;
+        .root-card > span {
             color: #a1a1a6;
             font-size: 12px;
+            margin-top: 4px;
         }
 
         .root-card .root-desc {
             font-size: 12px;
             color: #c0c0c5;
-            margin: 0;
+            margin: 8px 0 0 0;
             line-height: 1.35;
-            flex: 1;
         }
 
         .root-card .root-ref {
             font-size: 11px;
             color: var(--accent-blue);
-            margin: 0;
-            white-space: nowrap;
+            margin: 6px 0 0 0;
         }
 
         .sub-tree {
-            margin-top: 34px;
+            margin-top: 16px;
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
             justify-content: center;
             position: relative;
-            padding-top: 28px;
+            padding-top: var(--sub-drop-h);
         }
 
         .sub-tree::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 12%;
-            right: 12%;
-            height: 2px;
+            left: 9%;
+            right: 9%;
+            height: var(--connector-w);
             background-color: var(--line-color);
         }
 
         .node-wrapper > .sub-tree::after {
             content: '';
             position: absolute;
-            top: -22px;
+            top: calc(var(--sub-bridge-h) * -1);
             left: 50%;
             transform: translateX(-50%);
-            width: 2px;
-            height: 22px;
+            width: var(--connector-w);
+            height: var(--sub-bridge-h);
             background-color: var(--line-color);
         }
 
@@ -339,11 +332,11 @@
         .sub-tree .mini-card::before {
             content: '';
             position: absolute;
-            top: -28px;
+            top: calc(var(--sub-drop-h) * -1);
             left: 50%;
             transform: translateX(-50%);
-            width: 2px;
-            height: 28px;
+            width: var(--connector-w);
+            height: var(--sub-drop-h);
             background-color: var(--line-color);
         }
 
@@ -373,14 +366,14 @@
 
         @media (max-width: 1024px) {
             .tree-level {
-                padding-top: 38px;
-                margin-top: 34px;
+                padding-top: 6px;
+                margin-top: 0;
             }
 
             .nodes-row { 
                 flex-direction: column; 
                 align-items: center; 
-                gap: 40px; 
+                gap: 28px; 
                 padding-top: 0;
             }
 
@@ -391,32 +384,35 @@
             .nodes-row > .node-wrapper::before {
                 content: '';
                 position: absolute;
-                top: -40px;
+                top: -8px;
                 left: 50%;
-                width: 2px;
-                height: 40px;
+                width: var(--connector-w);
+                height: 8px;
                 background-color: var(--line-color);
             }
 
             .sub-tree::before {
-                left: 6%;
-                right: 6%;
+                left: 8%;
+                right: 8%;
+            }
+
+            .sub-tree {
+                margin-top: 14px;
+                padding-top: 10px;
+            }
+
+            .node-wrapper > .sub-tree::after {
+                top: -8px;
+                height: 8px;
+            }
+
+            .sub-tree .mini-card::before {
+                top: -12px;
+                height: 12px;
             }
 
             .root-card {
                 width: min(700px, 96vw);
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-                text-align: left;
-            }
-
-            .root-head {
-                min-width: 0;
-            }
-
-            .root-card .root-ref {
-                white-space: normal;
             }
         }
 
@@ -466,13 +462,12 @@
                 box-shadow: none;
             }
 
-            .tree-container,
-            .tree-level,
-            .nodes-row,
             .node-wrapper,
-            .sub-tree {
+            .sub-tree,
+            .extra-detail-row .mini-card {
                 break-inside: avoid;
                 page-break-inside: avoid;
+                break-inside: avoid-page;
             }
 
             .tree-container {
@@ -481,14 +476,14 @@
             }
 
             .tree-level {
-                margin-top: 24px;
-                padding-top: 38px;
+                margin-top: 0;
+                padding-top: 4px;
             }
 
             .nodes-row {
-                gap: 10px;
+                gap: 8px;
                 justify-content: space-between;
-                padding-top: 24px;
+                padding-top: 8px;
             }
 
             .nodes-row > .node-wrapper {
@@ -497,14 +492,52 @@
             }
 
             .sub-tree {
-                margin-top: 20px;
-                gap: 8px;
-                padding-top: 22px;
+                margin-top: 12px;
+                gap: 6px;
+                padding-top: 10px;
+            }
+
+            .card {
+                padding: 14px 10px;
+            }
+
+            .card-img,
+            .mini-card-img {
+                height: 62px;
+                margin-bottom: 8px;
+            }
+
+            .card h3 {
+                font-size: 14px;
+            }
+
+            .card > span {
+                font-size: 9px;
+            }
+
+            .mini-card .card-title {
+                font-size: 12px;
+            }
+
+            .mini-card .card-desc,
+            .mini-card .card-mini-note,
+            .mini-card .card-ref {
+                font-size: 9px;
+                line-height: 1.3;
+            }
+
+            .root-card h3 {
+                font-size: 16px;
+            }
+
+            .root-card .root-desc,
+            .root-card .root-ref {
+                font-size: 10px;
+                line-height: 1.3;
             }
 
             .img-apa {
-                font-size: 7px;
-                color: #8d8d94;
+                display: none;
             }
 
             .footer-note {
@@ -532,13 +565,8 @@
         <!-- NIVEL 1: RAÍZ -->
         <div class="node-wrapper">
             <div class="card root-card">
-                <div class="root-head">
-                    <i class="fas fa-flag node-icon" style="color: #FFCD00;"></i>
-                    <div>
-                        <h3>ESTADO COLOMBIANO</h3>
-                        <span>Organización política</span>
-                    </div>
-                </div>
+                <h3>ESTADO COLOMBIANO</h3>
+                <span>Organización política</span>
                 <p class="root-desc">República unitaria, descentralizada, con autonomía de sus entidades territoriales. El poder público se distribuye para garantizar equilibrio y control.</p>
                 <p class="root-ref">Art. 1° Constitución Política</p>
             </div>
